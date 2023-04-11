@@ -1,0 +1,9 @@
+package com.restapi.dao;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.restapi.entities.courses;
+
+public interface coursedao extends JpaRepository <courses,String>{
+
+}

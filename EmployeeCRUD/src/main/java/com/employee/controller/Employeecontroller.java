@@ -1,0 +1,65 @@
+package com.employee.controller;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.employee.entity.employee;
+import com.employee.exception.ResourceNotFound;
+import com.employee.repository.EmployeeRepository;
+
+@RestController
+@RequestMapping("/api/v1")
+@CrossOrigin(origins="http://localhost:4200")
+public class Employeecontroller {
+	@Autowired
+    public EmployeeRepository repository;
+		
+	@GetMapping("/employees")
+	public List<employee>getAllEmployees(){
+		return repository.findAll();
+	}
+	@PostMapping("/employees")
+	public employee saveEmployee(@RequestBody employee Employee) {
+		return repository.save(Employee);
+	}
+	@GetMapping("employees/{id}")
+	public ResponseEntity<employee> getEmployeeByID(@PathVariable int id){
+		employee Employee = repository.findById(id)
+				.orElseThrow(()->new ResourceNotFound("no record found with this id:"+ id));
+		return ResponseEntity.ok(Employee);
+	}
+	@PutMapping ("employees/{id}")
+	public ResponseEntity<employee>updateEmployee (@PathVariable int id, @RequestBody employee Employee) {
+	employee Employee2= repository.findById(id)
+	.orElseThrow(()-> new ResourceNotFound("No record found with this id:" + id));
+	Employee.setName(Employee.getName());
+	Employee.setAddress (Employee.getAddress());
+	Employee.setSalary(Employee.getSalary());
+	employee updateEmployee =repository.save (Employee2);
+	return ResponseEntity.ok (updateEmployee);
+	}
+	@DeleteMapping("employees/{id}")
+	public ResponseEntity<Map<String, Boolean>> deleteEmployee(@PathVariable int id){
+		employee Employee = repository.findById(id).
+				orElseThrow(()-> new ResourceNotFound("No record found with this id:" + id));
+		repository.delete(Employee);
+		Map<String, Boolean>response=new HashMap<>();
+		response.put("deleted",Boolean.TRUE);
+		return ResponseEntity.ok(response);
+		}
+}
+

@@ -1,0 +1,5 @@
+package com.in.Blog.dao;
+
+public interface UserDao {
+
+}
