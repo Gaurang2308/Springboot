@@ -1,0 +1,33 @@
+package com.employee.services;
+
+import java.util.ArrayList;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import com.employee.entity.Employee;
+import com.employee.repository.EmployeeRepository;
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
+
+	@Autowired
+	EmployeeRepository repository;
+	
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		// TODO Auto-generated method stub
+		System.out.println(username);
+		Employee employee= repository.findByUsername(username);
+		if(username.equals("Gaurang")) {
+			return new User("Gaurang", "Gaurang2308", new ArrayList<>());
+		}else {
+			throw new UsernameNotFoundException("user not found ");
+		}
+		
+	}
+
+}

@@ -1,0 +1,43 @@
+package com.employee.services;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import com.employee.entity.Employee;
+import com.employee.repository.EmployeeRepository;
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
+
+	@Autowired
+	EmployeeRepository repository;
+	
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		// TODO Auto-generated method stub
+		System.out.println(username);
+		Employee employee= repository.findByUsername(username);
+		if(employee==null)
+		{
+			throw new UsernameNotFoundException("user not found by given username ");
+		}
+		
+		List<SimpleGrantedAuthority> authority=Arrays.asList(new SimpleGrantedAuthority(employee.getStatus()));
+		System.out.println(authority);
+		
+		
+		return new User(employee.getUsername(),employee.getPassword(),authority);
+	}
+		
+	}
+
+

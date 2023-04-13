@@ -5,6 +5,11 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,10 +18,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import com.employee.entity.Employee;
 import com.employee.exception.ResourseNotFound;
+import com.employee.helper.JwtUtil;
+import com.employee.model.JwtRequest;
+import com.employee.model.JwtResponse;
 import com.employee.repository.EmployeeRepository;
+import com.employee.services.CustomUserDetailsService;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -24,6 +34,39 @@ import com.employee.repository.EmployeeRepository;
 public class EmployeeController {
     @Autowired
 	public EmployeeRepository repository;
+	@Autowired
+	private AuthenticationManager authoticationManager;
+	@Autowired
+	private JwtUtil jwtUtil;
+	
+	@Autowired
+	private CustomUserDetailsService customUserDetailsService;
+	
+    @RequestMapping("/welcome")
+    public String welcome()
+    {
+ 	   String text ="this is private page";
+ 	   text+="this page is not allowed to unauthenticated user";
+        return text;
+    }
+    @RequestMapping(value = "/login",method = RequestMethod.POST)
+   	public ResponseEntity<?> generateToken(@RequestBody JwtRequest jwtRequest)throws Exception{
+       	System.out.println(jwtRequest);
+       	try {
+       		this.authoticationManager.authenticate(new UsernamePasswordAuthenticationToken(jwtRequest.getUsername(), jwtRequest.getPassword()));
+   			
+   		} catch (UsernameNotFoundException e) {
+   			e.printStackTrace();
+   			throw new Exception("Bad Credentials");
+   		}catch(BadCredentialsException e) {
+   			e.printStackTrace();
+   			throw new Exception("Bad Credentials");
+   		}
+       	UserDetails userDetails = this.customUserDetailsService.loadUserByUsername(jwtRequest.getUsername());
+       	String token = this.jwtUtil.generateToken(userDetails);
+    	System.out.println("Jwt"+token);
+    	return ResponseEntity.ok(new JwtResponse(token));
+       	}
     
     @GetMapping("/employees")
     public List<Employee> getAllEmployee(){
@@ -39,7 +82,7 @@ public class EmployeeController {
     	Employee employee=repository.findById(id)
     			.orElseThrow(()-> new ResourseNotFound("no record found with this id:"+id));
     	return ResponseEntity.ok(employee);
-    }
+    } 
     @PutMapping("/employees/{id}")
     public ResponseEntity<Employee> updateEmployee(@PathVariable int id,@RequestBody Employee employee){
     	Employee employee2=repository.findById(id)
