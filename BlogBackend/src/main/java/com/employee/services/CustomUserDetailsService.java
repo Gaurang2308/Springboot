@@ -9,26 +9,31 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.employee.entity.CustomUserDetails;
 import com.employee.entity.Employee;
 import com.employee.repository.EmployeeRepository;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
 	@Autowired
-	EmployeeRepository repository;
+	private EmployeeRepository employeeRepository;
+                                              
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		// TODO Auto-generated method stub
-		if(username.equals("Gaurang")) {
-			return new User("Gaurang", "Gaurang2308", new ArrayList<>());
-		}else {
-			throw new UsernameNotFoundException("user not found ");
-		}
-//		Employee findEmployeeByUsername = repository.findByuserName(username);
-//		System.out.println(findEmployeeByUsername);
-//		return new User(findEmployeeByUsername.getUsername(), findEmployeeByUsername.getPassword(), new ArrayList<>());
-//		
+Employee employee=this.employeeRepository.findByUsername(username);
+if (employee==null) {
+	throw new UsernameNotFoundException("user not found");
+}
+else {
+	return new CustomUserDetails(employee);
+}
 	}
 
 }
+
+//		if(username.equals("Gaurang")) {
+//			return new User("Gaurang", "Gaurang2308", new ArrayList<>());
+//		}else {
+//			throw new UsernameNotFoundException("user not found ");
+//		}

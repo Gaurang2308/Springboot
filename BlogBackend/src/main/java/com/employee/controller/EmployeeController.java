@@ -42,32 +42,33 @@ public class EmployeeController {
 	@Autowired
 	private CustomUserDetailsService customUserDetailsService;
 	
-    @RequestMapping("/welcome")
-    public String welcome()
-    {
- 	   String text ="this is private page";
- 	   text+="this page is not allowed to unauthenticated user";
-        return text;
-    }
-    @RequestMapping(value = "/login",method = RequestMethod.POST)
-   	public ResponseEntity<?> generateToken(@RequestBody JwtRequest jwtRequest)throws Exception{
-       	System.out.println(jwtRequest);
-       	try {
-       		this.authoticationManager.authenticate(new UsernamePasswordAuthenticationToken(jwtRequest.getUsername(), jwtRequest.getPassword()));
-   			
-   		} catch (UsernameNotFoundException e) {
-   			e.printStackTrace();
-   			throw new Exception("Bad Credentials");
-   		}catch(BadCredentialsException e) {
-   			e.printStackTrace();
-   			throw new Exception("Bad Credentials");
-   		}
-       	UserDetails userDetails = this.customUserDetailsService.loadUserByUsername(jwtRequest.getUsername());
-       	String token = this.jwtUtil.generateToken(userDetails);
-    	System.out.println("Jwt"+token);
-    	return ResponseEntity.ok(new JwtResponse(token));
-       	}
-    
+//    @RequestMapping("/welcome")
+//    public String welcome()
+//    {
+// 	   String text ="this is private page";
+// 	   text+="this page is not allowed to unauthenticated user";
+//        return text;
+//    }
+//  
+//    @RequestMapping(value = "/login",method = RequestMethod.POST)
+//   	public ResponseEntity<?> generateToken(@RequestBody JwtRequest jwtRequest)throws Exception{
+//       	System.out.println(jwtRequest);
+//       	try {
+//       		this.authoticationManager.authenticate(new UsernamePasswordAuthenticationToken(jwtRequest.getUsername(), jwtRequest.getPassword()));
+//   			
+//   		} catch (UsernameNotFoundException e) {
+//   			e.printStackTrace();
+//   			throw new Exception("Bad Credentials");
+//   		}catch(BadCredentialsException e) {
+//   			e.printStackTrace();
+//   			throw new Exception("Bad Credentials");
+//   		}
+//       	UserDetails userDetails = this.customUserDetailsService.loadUserByUsername(jwtRequest.getUsername());
+//       	String token = this.jwtUtil.generateToken(userDetails);
+//    	System.out.println("Jwt"+token);
+//    	return ResponseEntity.ok(new JwtResponse(token));
+//       	}
+//    
     @GetMapping("/employees")
     public List<Employee> getAllEmployee(){
     	return repository.findAll();

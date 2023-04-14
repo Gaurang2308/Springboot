@@ -23,6 +23,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 public class Employee implements  UserDetails {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
