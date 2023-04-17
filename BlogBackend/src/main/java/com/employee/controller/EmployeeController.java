@@ -10,6 +10,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,9 +30,11 @@ import com.employee.repository.EmployeeRepository;
 import com.employee.services.CustomUserDetailsService;
 
 @RestController
-@RequestMapping("/api/v1")
 @CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/api/v1")
 public class EmployeeController {
+	@Autowired
+	public PasswordEncoder passwordEncoder;
     @Autowired
 	public EmployeeRepository repository;
 	@Autowired

@@ -16,6 +16,22 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 public class Blog {
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
+	@Override
+	public String toString() {
+		return "Blog [id=" + id + ", title=" + title + ", discription=" + discription + ", url=" + url + ", username="
+				+ username + "]";
+	}
+	@Column
+    private String title;
+	@Column
+    private String discription;
+ 	@Column
+    private String url;
+ 	@Column
+ 	private String username;
 	public int getId() {
 		return id;
 	}
@@ -40,22 +56,24 @@ public class Blog {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
-	@Column
-    private String title;
-	@Column
-    private String discription;
- 	@Column
-    private String url;
- 	@Column
- 	private String Username;
 	public String getUsername() {
-		return Username;
+		return username;
 	}
-	public void setUsername(String Username) {
-		this.Username = Username;
+	public void setUsername(String username) {
+		this.username = username;
 	}
+	public Blog(int id, String title, String discription, String url, String username) {
+		super();
+		this.id = id;
+		this.title = title;
+		this.discription = discription;
+		this.url = url;
+		this.username = username;
+	}
+	public Blog() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+ 	
 	
 }

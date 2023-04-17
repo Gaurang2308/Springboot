@@ -20,6 +20,7 @@ import com.employee.entity.Blog;
 import com.employee.exception.ResourcenotFound;
 
 import com.employee.repository.BlogRepository;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 
 @RestController
@@ -38,25 +39,24 @@ public class BlogController {
     public Blog saveBlog(@RequestBody Blog blog) {
     	return repository.save(blog);
     }
-    @GetMapping("/Blogs/{id}")
-    public ResponseEntity<Blog> getBlogByID(@PathVariable int id){
-    	Blog blog=repository.findById(id).orElseThrow(()-> new ResourcenotFound("No record Found with this id:"+id));
+    @GetMapping("/Blogs/{username}")
+    public ResponseEntity<List<Blog>> getBlogByUsername(@PathVariable("username") String username){
+    	List<Blog> blog=repository.findAllByUsername(username);
+    	System.out.println(blog);
     	return ResponseEntity.ok(blog);
     }
-    @PutMapping("/Blogs/{id}")
-    public ResponseEntity<Blog> updateBlog(@PathVariable int id,@RequestBody Blog blog){
-    	Blog blog2=repository.findById(id).orElseThrow(()-> new ResourcenotFound("No record Found with this id:"+id));
-        
+    @PutMapping("/Blogs/{Id}")
+    public ResponseEntity<Blog> updateBlog(@PathVariable int Id,@RequestBody Blog blog){
+    	Blog blog2=repository.findById(Id);
     	blog2.setTitle(blog.getTitle());
         blog2.setDiscription(blog.getDiscription());
         blog2.setUrl(blog.getUrl());
         Blog updateBlog=repository.save(blog2);	
     	return ResponseEntity.ok(updateBlog);
     }
-    @DeleteMapping("Blogs/{id}")
-    public ResponseEntity<Map<String, Boolean>> deleteBlog(@PathVariable int id){
-    	Blog blog=repository.findById(id).orElseThrow(()-> new ResourcenotFound("No record Found with this id:"+id));
-    	repository.delete(blog);
+    @DeleteMapping("Blogs/{Id}")
+    public ResponseEntity<Map<String, Boolean>> deleteBlog(@PathVariable int Id){
+    	Blog blog=repository.findById(Id);
     	Map<String, Boolean>response=new HashMap<>();
     	response.put("deleted",Boolean.TRUE);
     	return ResponseEntity.ok(response);
