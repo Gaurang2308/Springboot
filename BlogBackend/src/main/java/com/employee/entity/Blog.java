@@ -74,6 +74,7 @@ public class Blog {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
  	
 	
 }
